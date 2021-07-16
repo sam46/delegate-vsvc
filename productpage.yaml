@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: productpage
+spec:
+  selector:
+    matchLabels:
+      app: productpage
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: productpage
+    spec:
+      containers:
+      - name: productpage
+        image: nginx
+        ports:
+        - containerPort: 80
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "echo Hello productpage > /usr/share/nginx/html/index.html"]
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: productpage-svc
+  labels:
+    app: productpage
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    app: productpage
